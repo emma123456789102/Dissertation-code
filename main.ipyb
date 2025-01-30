@@ -1,0 +1,206 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.metrics import classification_report, accuracy_score, roc_auc_score, precision_score, recall_score, f1_score,roc_curve, auc
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import LogisticRegression
+from imblearn.over_sampling import SMOTE
+import seaborn as sns
+import joblib
+import matplotlib.pyplot as plt
+from sklearn.pipeline import Pipeline
+from xgboost import XGBClassifier
+
+# Load dataset
+data = pd.read_csv("/content/drive/MyDrive/autism_screening.csv")
+
+# Display dataset information
+print("Dataset Overview:")
+print(data.head())
+print(data.info())
+
+# Preprocessing: Remove irrelevant columns
+if 'ID' in data.columns:
+    data = data.drop(columns=['ID'])
+
+# Handle missing values (drop rows with missing values for simplicity/ values that are not needed)
+data = data.dropna()
+
+# Encode categorical variables
+categorical_columns = data.select_dtypes(include=['object']).columns  # Identify all object-type columns
+label_encoders = {}
+
+for column in categorical_columns:
+    le = LabelEncoder()
+    data[column] = le.fit_transform(data[column])
+    label_encoders[column] = le
+
+# Define features (X) and target (y)
+X = data.drop(columns=['A1_Score'])
+y = data['A1_Score']
+
+# Convert to numeric types (double-check for any residual non-numeric values)
+X = X.apply(pd.to_numeric, errors='coerce')
+y = pd.to_numeric(y, errors='coerce')
+
+# Drop any rows with NaN values after encoding
+X = X.dropna()
+y = y[X.index]
+
+
+# Standardize numerical features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)  # Fit and transform training data
+X_test_scaled = scaler.transform(X_test)  # Transform test data
+
+# Save the scaler for future use
+import joblib
+joblib.dump(scaler, 'scaler.pkl')
+
+# Handle class imbalance using SMOTE
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X, y)
+
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42, stratify=y_resampled)
+
+# Standardize numerical features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# --- Advanced Model 1: Random Forest with Hyperparameter Tuning ---
+print("\nTraining Random Forest with Hyperparameter Tuning...")
+rf_params = {
+    'n_estimators': [100, 200, 300],
+    'max_depth': [None, 10, 20, 30],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+rf_model = GridSearchCV(RandomForestClassifier(random_state=42, class_weight='balanced'), rf_params, cv=StratifiedKFold(n_splits=5), scoring='roc_auc', n_jobs=-1)
+rf_model.fit(X_train, y_train)
+
+print("Best Random Forest Parameters:", rf_model.best_params_)
+rf_best = rf_model.best_estimator_
+
+# Feature Importance Visualization
+feature_importances = rf_best.feature_importances_
+plt.figure(figsize=(10, 6))
+sns.barplot(x=feature_importances, y=X.columns)
+plt.xlabel("Feature Importance")
+plt.ylabel("Features")
+plt.title("Random Forest Feature Importance")
+plt.show()
+
+# Evaluate Random Forest
+rf_predictions = rf_best.predict(X_test)
+print("Random Forest Accuracy:", accuracy_score(y_test, rf_predictions))
+print("Random Forest ROC-AUC:", roc_auc_score(y_test, rf_predictions))
+print(classification_report(y_test, rf_predictions))
+
+# ROC Curve Visualization
+def plot_roc_curve(y_test, model, X_test, label):
+    y_probs = model.predict_proba(X_test)[:, 1]
+    fpr, tpr, _ = roc_curve(y_test, y_probs)
+    plt.plot(fpr, tpr, label=f'{label} (AUC = {auc(fpr, tpr):.2f}')
+
+plt.figure(figsize=(8, 6))
+plot_roc_curve(y_test, rf_best, X_test, "Random Forest")
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve Comparison")
+plt.legend()
+plt.show()
+
+# Save Model
+joblib.dump(rf_best, 'autism_prediction_model.pkl')
+
+# Function to Predict Autism
+def predict_autism(input_data):
+    model = joblib.load('autism_prediction_model.pkl')
+    input_df = pd.DataFrame([input_data], columns=X.columns)
+    input_scaled = scaler.transform(input_df)
+    prediction = model.predict(input_scaled)
+    return "Autistic" if prediction[0] == 1 else "Not Autistic"
+
+# Example Usage
+example_data = X.iloc[0].to_dict()
+prediction_result = predict_autism(example_data)
+print("Predicted Diagnosis:", prediction_result)
+
+# Evaluate Random Forest
+rf_predictions = rf_best.predict(X_test)
+print("Random Forest Accuracy:", accuracy_score(y_test, rf_predictions))
+print("Random Forest ROC-AUC:", roc_auc_score(y_test, rf_predictions))
+print(classification_report(y_test, rf_predictions))
+
+# --- Advanced Model 2: Neural Network with Hyperparameter Tuning ---
+print("\nTraining Neural Network with Hyperparameter Tuning...")
+nn_params = {
+    'hidden_layer_sizes': [(64, 32), (128, 64, 32)],
+    'activation': ['relu', 'tanh'],
+    'solver': ['adam', 'sgd'],
+    'max_iter': [500, 1000]
+}
+nn_model = GridSearchCV(MLPClassifier(random_state=42), nn_params, cv=StratifiedKFold(n_splits=5), scoring='roc_auc', n_jobs=-1)
+nn_model.fit(X_train_scaled, y_train)
+
+print("Best Neural Network Parameters:", nn_model.best_params_)
+nn_best = nn_model.best_estimator_
+
+# Evaluate Neural Network
+nn_predictions = nn_best.predict(X_test_scaled)
+print("Neural Network Accuracy:", accuracy_score(y_test, nn_predictions))
+print("Neural Network ROC-AUC:", roc_auc_score(y_test, nn_predictions))
+print(classification_report(y_test, nn_predictions))
+
+# --- Advanced Model 3: XGBoost Classifier ---
+print("\nTraining XGBoost Classifier...")
+xgb_model = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+xgb_model.fit(X_train, y_train)
+
+# Evaluate XGBoost
+xgb_predictions = xgb_model.predict(X_test)
+print("XGBoost Accuracy:", accuracy_score(y_test, xgb_predictions))
+print("XGBoost ROC-AUC:", roc_auc_score(y_test, xgb_predictions))
+print(classification_report(y_test, xgb_predictions))
+
+# --- Visualisations for the comparision and the findings chapter  ----
+# Visualization: Neural Network Loss Curve
+def plot_nn_loss_curve(history):
+    plt.plot(history.loss_curve_)
+    plt.xlabel('Iterations')
+    plt.ylabel('Loss')
+    plt.title('Neural Network Training Loss Curve')
+    plt.show()
+
+# Visualization: Linear Regression Results
+def plot_linear_regression(y_test, y_pred):
+    plt.figure(figsize=(8, 6))
+    sns.regplot(x=y_test, y=y_pred, scatter_kws={'alpha':0.5})
+    plt.xlabel('Actual Values')
+    plt.ylabel('Predicted Values')
+    plt.title('Linear Regression Results')
+    plt.show()
+
+# Visualization: ROC Curve Comparison
+def plot_roc_comparison(models, X_test, y_test):
+    plt.figure(figsize=(8, 6))
+    for name, model in models.items():
+        y_probs = model.predict_proba(X_test)[:, 1]
+        fpr, tpr, _ = roc_curve(y_test, y_probs)
+        plt.plot(fpr, tpr, label=f'{name} (AUC = {auc(fpr, tpr):.2f})')
+
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC Curve Comparison')
+    plt.legend()
+    plt.show()
+
+
+# --- Save the Best Model (Random Forest in this example) ---
+print("\nSaving the Random Forest model...")
+joblib.dump(rf_best, 'autism_prediction_model_advanced.pkl')
