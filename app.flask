@@ -1,0 +1,45 @@
+
+# --- Deployment Instructions ---
+print("\nModel saved! To deploy, use Flask or FastAPI.")
+from flask import Flask, request, jsonify
+import joblib
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+# Load the trained model and scaler
+model = joblib.load('autism_prediction_model.pkl')
+scaler = joblib.load('scaler.pkl')  # Save the scaler during training and load it here
+
+# Define the feature columns (Replace with actual feature names from your dataset)
+feature_columns = ['A1_score', 'A2_score', 'age', 'gender']  # Update accordingly
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Autism Prediction API is Running!"
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        # Get JSON data from request
+        data = request.get_json()
+        
+        # Convert data into DataFrame
+        input_data = pd.DataFrame([data], columns=feature_columns)
+        
+        # Standardize the input
+        input_scaled = scaler.transform(input_data)
+        
+        # Make prediction
+        prediction = model.predict(input_scaled)
+        
+        # Return response
+        result = "Autistic" if prediction[0] == 1 else "Not Autistic"
+        return jsonify({'prediction': result})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+if __name__ == '__main__':
+    app.run(debug=True)
