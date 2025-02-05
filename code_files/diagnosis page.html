@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnosis Results</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Diagnosis Results</h1>
+        <div class="nav-buttons">
+            <button onclick="goToDashboard()">Back to Dashboard</button>
+            <button onclick="goToSupport()">Support</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Your Autism Assessment Results</h2>
+        <p id="diagnosisMessage"></p>
+
+        <div class="card">
+            <h3>What Next?</h3>
+            <p id="recommendation"></p>
+        </div>
+
+        <button class="restart-btn" onclick="restartTest()">Retake Questionnaire</button>
+    </div>
+
+    <script>
+        // Retrieve score from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const score = parseInt(urlParams.get("score"));
+
+        // Elements to update
+        const diagnosisMessage = document.getElementById("diagnosisMessage");
+        const recommendation = document.getElementById("recommendation");
+
+        // Determine diagnosis based on score
+        if (score >= 40) {
+            diagnosisMessage.innerHTML = "High likelihood of autism spectrum traits. Please consult a specialist.";
+            recommendation.innerHTML = "We strongly recommend booking an appointment with a licensed psychologist or developmental specialist.";
+        } else if (score >= 25) {
+            diagnosisMessage.innerHTML = "Moderate likelihood of autism spectrum traits.";
+            recommendation.innerHTML = "Consider speaking to a healthcare professional if you have concerns.";
+        } else {
+            diagnosisMessage.innerHTML = "Low likelihood of autism spectrum traits.";
+            recommendation.innerHTML = "However, if you have concerns, it's always best to seek professional advice.";
+        }
+
+        // Restart questionnaire function
+        function restartTest() {
+            window.location.href = "questionnaire_start.html";
+        }
+
+        // Navigate back to dashboard
+        function goToDashboard() {
+            window.location.href = "dashboard.html";
+        }
+
+        // Navigate to support page
+        function goToSupport() {
+            window.location.href = "support.html";
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .container {
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 60%;
+            margin: auto;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .restart-btn {
+            background: #007bff;
+        }
+
+        .restart-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</body>
+</html>

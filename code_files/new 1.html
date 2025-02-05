@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autism Diagnosis Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="root">
+    <div class="card" id="signupPage">
+      <h1>Create New Account</h1>
+      <form id="signupForm">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required>
+
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+<p>Already have an account? <a href="dashboard.html">Go to Dashboard</a></p>
+
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const dobInput = document.getElementById("dob");
+
+      // Set min/max date range
+      const today = new Date().toISOString().split("T")[0]; // Today's date
+      dobInput.setAttribute("max", today); // Max: today
+      dobInput.setAttribute("min", "1900-01-01"); // Min: year 1900
+
+      // Prevent invalid dates
+      document.getElementById("signUpForm").addEventListener("submit", function (event) {
+        const dob = new Date(dobInput.value);
+        if (dob > new Date() || dob < new Date("1900-01-01")) {
+          alert("Please enter a valid date of birth.");
+          event.preventDefault();
+        }
+      });
+    });
+	document.getElementById("signUpForm").addEventListener("submit", function(event) {
+  event.preventDefault(); // Prevent form submission to server
+
+  // Simulating account creation
+  alert("Account created successfully!");
+
+  // Redirect to another page (e.g., Dashboard)
+  window.location.href = "dashboard.html";
+});
+
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #acb6e5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+  </style>
+
+</body>
+</html>
