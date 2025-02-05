@@ -1,0 +1,1 @@
+this github page is to create an ai based autism diagnosis website for my dissertation it uses three different machine learning tecnies random forest, svm, neural network to recognis the patterns between different questionnaires which is key to figuring out who is autistic or not
