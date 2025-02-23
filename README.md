@@ -22,7 +22,7 @@ Simply open `index.html` in your browser to explore the website.
 └── 📄 README.md         # Project documentation
 ```
 
-## 🎨 Customization
+## 🎨 Customisation
 Feel free to modify the styles and questions to better suit your needs!
 
 ## 🤝 Contributing
