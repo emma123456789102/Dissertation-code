@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autism Diagnosis Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="root">
+    <div class="card">
+      <h1>Autism Diagnosis Questionnaire</h1>
+      <form id="diagnosisForm">
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required>
+
+        <label for="social">Social Interaction Score (1-10):</label>
+        <input type="number" id="social" name="social" min="1" max="10" required>
+
+        <label for="communication">Communication Score (1-10):</label>
+        <input type="number" id="communication" name="communication" min="1" max="10" required>
+
+        <label for="behavior">Repetitive Behaviors Score (1-10):</label>
+        <input type="number" id="behavior" name="behavior" min="1" max="10" required>
+        
+        <label for="sensory">Sensitivity to Sensory Input (1-10):</label>
+        <input type="number" id="sensory" name="sensory" min="1" max="10" required>
+
+        <label for="focus">Ability to Maintain Focus (1-10):</label>
+        <input type="number" id="focus" name="focus" min="1" max="10" required>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="thankYouPage" class="hidden">
+    <div class="card">
+      <h1>Thank You!</h1>
+      <p>We appreciate your time in completing this questionnaire. Based on your answers, here is a preliminary assessment:</p>
+      <p id="diagnosisResult"></p>
+      <button onclick="restartForm()">Start Over</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <style>
+  /* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #74ebd5, #acb6e5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+#root, #thankYouPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #45a049;
+}
+</style>
+</body>
+</html>
