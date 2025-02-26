@@ -69,7 +69,138 @@
         <button type="button" onclick="nextStep(1)">Next</button>
       </div>
       
-      <div class="question hidden" id="step2">
+      <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autism Diagnosis Tool</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #acb6e5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #333;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 5px;
+      background: #e0e0e0;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background: #4CAF50;
+      width: 12.5%;
+    }
+
+    .rating {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    input[type="radio"] {
+      cursor: pointer;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+      .card {
+        padding: 20px;
+      }
+
+      button {
+        padding: 10px;
+      }
+
+      p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <div class="card">
+      <h1>Autism Diagnosis Questionnaire</h1>
+      <form id="diagnosisForm">
+        <div class="progress-bar">
+          <div class="progress" id="progress"></div>
+        </div>
+        
+        <!-- Step 1 -->
+        <div class="question" id="step1">
+          <label for="q1">1. Do you often notice small sounds that others do not?</label>
+          <div class="rating">
+            <input type="radio" name="q1" value="1" required> Never
+            <input type="radio" name="q1" value="2"> Rarely
+            <input type="radio" name="q1" value="3"> Sometimes
+            <input type="radio" name="q1" value="4"> Often
+            <input type="radio" name="q1" value="5"> Always
+          </div>
+          <button type="button" onclick="nextStep(1)">Next</button>
+        </div>
+
+        <div class="question hidden" id="step2">
         <p>2. Do you find it difficult to make eye contact with others?</p>
         <div class="rating">
           <input type="radio" name="q2" value="1" required> Never
@@ -150,6 +281,80 @@
           <button type="button" onclick="prevStep(6)">Back</button>
           <button type="button" onclick="nextStep(7)">Next</button>
         </div>
+
+
+        <div class="question hidden" id="step8">
+          <label for="q8">8. Do you have intense interests in specific topics?</label>
+          <div class="rating">
+            <input type="radio" name="q8" value="1" required> Never
+            <input type="radio" name="q8" value="2"> Rarely
+            <input type="radio" name="q8" value="3"> Sometimes
+            <input type="radio" name="q8" value="4"> Often
+            <input type="radio" name="q8" value="5"> Always
+          </div>
+          <button type="button" onclick="prevStep(7)">Back</button>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="thankYouPage" class="hidden">
+    <div class="card">
+      <h1>Thank You!</h1>
+      <p>We appreciate your time in completing this questionnaire. Based on your answers, here is a preliminary assessment:</p>
+      <p id="diagnosisResult"></p>
+      <button onclick="restartForm()">Start Over</button>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+
+    function nextStep(step) {
+      document.getElementById(`step${step}`).classList.add("hidden");
+      document.getElementById(`step${step + 1}`).classList.remove("hidden");
+      currentStep++;
+      updateProgress();
+    }
+
+    function prevStep(step) {
+      document.getElementById(`step${step + 1}`).classList.add("hidden");
+      document.getElementById(`step${step}`).classList.remove("hidden");
+      currentStep--;
+      updateProgress();
+    }
+
+    function updateProgress() {
+      let progressPercentage = (currentStep / 8) * 100;
+      document.getElementById("progress").style.width = `${progressPercentage}%`;
+    }
+
+    document.getElementById("diagnosisForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      let answers = [];
+      for (let i = 1; i <= 8; i++) {
+        let selected = document.querySelector(`input[name="q${i}"]:checked`);
+        answers.push(selected ? parseInt(selected.value) : 0);
+      }
+      let response = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: answers })
+      });
+      let data = await response.json();
+      document.getElementById("diagnosisResult").innerText = `Score: ${data.score}\n${data.message}`;
+      document.getElementById("root").classList.add("hidden");
+      document.getElementById("thankYouPage").classList.remove("hidden");
+    });
+
+    function restartForm() {
+      window.location.reload();
+    }
+  </script>
+</body>
+
+</html>
 
       <div class="question hidden" id="step8">
         <p>8. Do you have intense interests in specific topics?</p>
