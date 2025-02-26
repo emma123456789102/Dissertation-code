@@ -34,6 +34,26 @@
       </form>
     </div>
   </div>
+  
+<script>
+document.getElementById("questionnaire").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    
+    let feature1 = document.getElementById("feature1").value;
+    let feature2 = document.getElementById("feature2").value;
+    
+    let response = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ features: [parseFloat(feature1), parseFloat(feature2)] })
+    });
+
+    let data = await response.json();
+    document.getElementById("result").innerText = "Prediction: " + data.prediction;
+});
+</script>
  <script>
         function Sunmitsupport() {
             window.location.href = "/support page/index.html"; // Redirect to actual questionnaire page
