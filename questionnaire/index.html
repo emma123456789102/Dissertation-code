@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Autism Diagnosis Tool</title>
   <link rel="stylesheet" href="styles.css">
-  <script defer src="script.js"></script> 
+  <script defer src="script.js"></script>
 </head>
 <body>
 
@@ -15,45 +15,64 @@
   <div id="root">
     <div class="card">
       <h1>Autism Diagnosis Questionnaire</h1>
+
       <form id="diagnosisForm">
 
-        <p>1. Do you often notice small sounds that others do not?</p>
-        <div class="rating">
-          <input type="radio" name="q1" value="1" required> Never
-          <input type="radio" name="q1" value="2"> Rarely
-          <input type="radio" name="q1" value="3"> Sometimes
-          <input type="radio" name="q1" value="4"> Often
-          <input type="radio" name="q1" value="5"> Always
+        <!-- Step 1 -->
+        <div class="question" id="step1">
+          <p>1. Do you often notice small sounds that others do not?</p>
+          <div class="rating">
+            <input type="radio" name="q1" value="1" required> Never
+            <input type="radio" name="q1" value="2"> Rarely
+            <input type="radio" name="q1" value="3"> Sometimes
+            <input type="radio" name="q1" value="4"> Often
+            <input type="radio" name="q1" value="5"> Always
+          </div>
+          <button type="button" onclick="nextStep(1)">Next</button>
         </div>
 
-        <p>2. Do you find it difficult to make eye contact with others?</p>
-        <div class="rating">
-          <input type="radio" name="q2" value="1" required> Never
-          <input type="radio" name="q2" value="2"> Rarely
-          <input type="radio" name="q2" value="3"> Sometimes
-          <input type="radio" name="q2" value="4"> Often
-          <input type="radio" name="q2" value="5"> Always
+        <!-- Step 2 -->
+        <div class="question hidden" id="step2">
+          <p>2. Do you find it difficult to make eye contact with others?</p>
+          <div class="rating">
+            <input type="radio" name="q2" value="1" required> Never
+            <input type="radio" name="q2" value="2"> Rarely
+            <input type="radio" name="q2" value="3"> Sometimes
+            <input type="radio" name="q2" value="4"> Often
+            <input type="radio" name="q2" value="5"> Always
+          </div>
+          <button type="button" onclick="prevStep(1)">Back</button>
+          <button type="button" onclick="nextStep(2)">Next</button>
         </div>
 
-        <p>3. Do you find social situations confusing or overwhelming?</p>
-        <div class="rating">
-          <input type="radio" name="q3" value="1" required> Never
-          <input type="radio" name="q3" value="2"> Rarely
-          <input type="radio" name="q3" value="3"> Sometimes
-          <input type="radio" name="q3" value="4"> Often
-          <input type="radio" name="q3" value="5"> Always
+        <!-- Step 3 -->
+        <div class="question hidden" id="step3">
+          <p>3. Do you find social situations confusing or overwhelming?</p>
+          <div class="rating">
+            <input type="radio" name="q3" value="1" required> Never
+            <input type="radio" name="q3" value="2"> Rarely
+            <input type="radio" name="q3" value="3"> Sometimes
+            <input type="radio" name="q3" value="4"> Often
+            <input type="radio" name="q3" value="5"> Always
+          </div>
+          <button type="button" onclick="prevStep(2)">Back</button>
+          <button type="button" onclick="nextStep(3)">Next</button>
         </div>
 
-        <p>4. Do you find it difficult to understand other people's emotions?</p>
-        <div class="rating">
-          <input type="radio" name="q4" value="1" required> Never
-          <input type="radio" name="q4" value="2"> Rarely
-          <input type="radio" name="q4" value="3"> Sometimes
-          <input type="radio" name="q4" value="4"> Often
-          <input type="radio" name="q4" value="5"> Always
+        <!-- Step 4 -->
+        <div class="question hidden" id="step4">
+          <p>4. Do you find it difficult to understand other people's emotions?</p>
+          <div class="rating">
+            <input type="radio" name="q4" value="1" required> Never
+            <input type="radio" name="q4" value="2"> Rarely
+            <input type="radio" name="q4" value="3"> Sometimes
+            <input type="radio" name="q4" value="4"> Often
+            <input type="radio" name="q4" value="5"> Always
+          </div>
+          <button type="button" onclick="prevStep(3)">Back</button>
+          <button type="submit">Submit</button>
         </div>
-
-        <p>5. Do you prefer routines and dislike changes?</p>
+   <p>5. Do you prefer routines and dislike changes?</p>
         <div class="rating">
           <input type="radio" name="q5" value="1" required> Never
           <input type="radio" name="q5" value="2"> Rarely
@@ -90,6 +109,10 @@
         </div>
 
         <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
       </form>
     </div>
   </div>
@@ -143,23 +166,36 @@
     transition: 0.3s;
     width: 100%;
     padding: 10px;
-    margin-top: 20px;
+    margin-top: 10px;
     border-radius: 5px;
   }
 
   button:hover {
     background: #45a049;
   }
+
+  .hidden {
+    display: none;
+  }
   </style>
 
   <script>
-  document.getElementById("diagnosisForm").addEventListener("submit", function(event) {
-      event.preventDefault(); 
+  let currentStep = 1;
 
-      // Redirect to diagnosing page
-      window.location.href = "diagnosing.html"; 
+  function nextStep(step) {
+    document.getElementById(`step${step}`).classList.add("hidden");
+    document.getElementById(`step${step + 1}`).classList.remove("hidden");
+    currentStep++;
+  }
+
+  function prevStep(step) {
+    document.getElementById(`step${step + 1}`).classList.add("hidden");
+    document.getElementById(`step${step}`).classList.remove("hidden");
+    currentStep--;
+  }
+
+  document.getElementById("diagnosisForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      window.location.href = "/diagnosing_page/ index.html"; 
   });
   </script>
-
-</body>
-</html>
