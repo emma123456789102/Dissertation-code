@@ -90,7 +90,16 @@
           setTimeout(() => {
             window.location.href = "dashboard.html";
           }, 1000);
+          // ✅ Submit form to Netlify using a hidden iframe to avoid blocking redirect
+        const hiddenFrame = document.createElement("iframe");
+        hiddenFrame.style.display = "none";
+        document.body.appendChild(hiddenFrame);
+        authForm.target = hiddenFrame.name;
 
+        authForm.submit(); // ✅ Netlify form submission
+
+        // ✅ Redirect immediately
+        window.location.href = "/dashboard/index.html";
         } catch (error) {
           alert(error.message);
         }
