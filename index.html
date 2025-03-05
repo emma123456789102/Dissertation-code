@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autism Diagnosis Tool</title>
+  <title>Autism Diagnosis Tool - Sign In</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="root">
-    <div class="card" id="signupPage">
-      <h1>Create New Account</h1>
-      <form id="signupForm">
-        <label for="name">Full Name:</label>
+    <div class="card" id="authPage">
+      <h1 id="formTitle">Create New Account</h1>
+      <form id="authForm">
+        <label for="name" id="nameLabel">Full Name:</label>
         <input type="text" id="name" name="name" required>
 
         <label for="email">Email:</label>
@@ -20,53 +20,59 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
-        <label for="dob">Date of Birth:</label>
+        <label for="dob" id="dobLabel">Date of Birth:</label>
         <input type="date" id="dob" name="dob" required>
 
         <button type="submit">Sign Up</button>
       </form>
+      <p id="toggleAuth">Already have an account? <a href="#">Log In</a></p>
     </div>
-<p>Already have an account? <a href="dashboard.html">Go to Dashboard</a></p>
+  </div>
 
-  
-  <script>
+  <script type="module">
+    import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "./firebase.js";
+
     document.addEventListener("DOMContentLoaded", function () {
-      const dobInput = document.getElementById("dob");
+      const authForm = document.getElementById("authForm");
+      const toggleAuth = document.getElementById("toggleAuth");
+      const formTitle = document.getElementById("formTitle");
+      const nameField = document.getElementById("name");
+      const nameLabel = document.getElementById("nameLabel");
+      const dobField = document.getElementById("dob");
+      const dobLabel = document.getElementById("dobLabel");
+      let isSignUp = true;
 
-      // Set min/max date range
-      const today = new Date().toISOString().split("T")[0]; // Today's date
-      dobInput.setAttribute("max", today); // Max: today
-      dobInput.setAttribute("min", "1900-01-01"); // Min: year 1900
+      toggleAuth.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        formTitle.innerText = isSignUp ? "Create New Account" : "Sign In";
+        toggleAuth.innerHTML = isSignUp ? "Already have an account? <a href='#'>Log In</a>" : "Don't have an account? <a href='#'>Sign Up</a>";
+        nameField.style.display = isSignUp ? "block" : "none";
+        nameLabel.style.display = isSignUp ? "block" : "none";
+        dobField.style.display = isSignUp ? "block" : "none";
+        dobLabel.style.display = isSignUp ? "block" : "none";
+        authForm.querySelector("button").innerText = isSignUp ? "Sign Up" : "Log In";
+      });
 
-      // Prevent invalid dates
-      document.getElementById("signUpForm").addEventListener("submit", function (event) {
-        const dob = new Date(dobInput.value);
-        if (dob > new Date() || dob < new Date("1900-01-01")) {
-          alert("Please enter a valid date of birth.");
-          event.preventDefault();
+      authForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          if (isSignUp) {
+            await createUserWithEmailAndPassword(auth, email, password);
+            alert("Account created successfully!");
+          } else {
+            await signInWithEmailAndPassword(auth, email, password);
+            alert("Login successful!");
+            window.location.href = "dashboard.html";
+          }
+        } catch (error) {
+          alert(error.message);
         }
       });
     });
-	document.getElementById("signUpForm").addEventListener("submit", function(event) {
-  event.preventDefault(); // Prevent form submission to server
-
-  // Simulating account creation
-  alert("Account created successfully!");
-
-  // Redirect to another page (e.g., Dashboard)
-  window.location.href = "dashboard.html";
-});
-import { auth, signInWithEmailAndPassword } from "./firebase";
-
-const login = async (email, password) => {
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    alert("Login Successful!");
-  } catch (error) {
-    alert("Login Failed!");
-  }
-};
-
   </script>
 
   <style>
@@ -108,7 +114,12 @@ const login = async (email, password) => {
     button:hover {
       background: #45a049;
     }
-  </style>
 
+    #toggleAuth {
+      margin-top: 15px;
+      cursor: pointer;
+      color: #007BFF;
+    }
+  </style>
 </body>
 </html>
