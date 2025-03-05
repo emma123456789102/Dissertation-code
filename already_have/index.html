@@ -40,8 +40,10 @@
       alert("Login successful!");
       window.location.href = "/dashboard/index.html"; // Redirect after successful login
     } catch (error) {
-      alert("Login failed: " + error.message);
-    }
+  console.error("Login error:", error);
+  alert("Login failed: " + error.message);
+}
+
 
     loginButton.disabled = false; // Re-enable button after login attempt
   });
