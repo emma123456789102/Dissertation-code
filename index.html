@@ -105,7 +105,48 @@
         }
       });
     });
-  </script>
+
+
+
+    authForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const name = document.getElementById("name").value;
+      const dob = document.getElementById("dob").value;
+
+      try {
+        if (isSignUp) {
+          await createUserWithEmailAndPassword(auth, email, password);
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+        }
+
+        // ✅ Send form data to Netlify via AJAX instead of normal submission
+        fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            "form-name": "authForm",
+            name: name,
+            email: email,
+            dob: dob
+          })
+        })
+        .then(() => {
+          console.log("Form submitted to Netlify successfully!");
+          // ✅ Redirect to the dashboard manually
+          window.location.href = "dashboard.html";
+        })
+        .catch(error => console.error("Form submission error:", error));
+
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  });
+</script>
+
 
   <style>
     body {
