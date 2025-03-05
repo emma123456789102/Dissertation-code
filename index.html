@@ -56,6 +56,16 @@
   // Redirect to another page (e.g., Dashboard)
   window.location.href = "dashboard.html";
 });
+import { auth, signInWithEmailAndPassword } from "./firebase";
+
+const login = async (email, password) => {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("Login Successful!");
+  } catch (error) {
+    alert("Login Failed!");
+  }
+};
 
   </script>
 
