@@ -10,9 +10,8 @@
   <div class="container">
     <h1>Login</h1>
 
-    <!-- ✅ Netlify Form with Firebase Authentication -->
-    <form name="loginForm" method="post" data-netlify="true" id="loginForm">
-      <!-- ✅ Hidden Input to Identify Form in Netlify -->
+    <!-- ❌ REMOVED data-netlify="true" to prevent Netlify taking control -->
+    <form name="loginForm" method="post" id="loginForm">
       <input type="hidden" name="form-name" value="loginForm">
       
       <label for="email">Email:</label>
@@ -24,16 +23,15 @@
       <button type="submit">Log In</button>
     </form>
 
-    <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+    <p>Don't have an account? <a href="index.html">Sign Up</a></p>
     <p id="errorMessage"></p>
   </div>
 
-  <!-- ✅ Firebase Login Script -->
   <script type="module">
     import { auth, signInWithEmailAndPassword } from "./firebase.js";
 
     document.getElementById("loginForm").addEventListener("submit", async function(event) {
-      event.preventDefault(); // Stop default Netlify behavior
+      event.preventDefault(); // ✅ Stop Netlify from handling the form submission
 
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
@@ -43,14 +41,14 @@
         await signInWithEmailAndPassword(auth, email, password);
         alert("Login successful!");
 
-        // ✅ Submit form data to Netlify (if needed)
+        // ✅ (OPTIONAL) Submit form data to Netlify without redirecting
         fetch("/", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams(new FormData(event.target)).toString(),
-        });
+        }).catch(error => console.error("Netlify form submission error:", error));
 
-        // ✅ Redirect to Dashboard
+        // ✅ Redirect to Dashboard IMMEDIATELY
         window.location.href = "/dashboard/index.html";
       } catch (error) {
         document.getElementById("errorMessage").innerText = "Login failed: " + error.message;
