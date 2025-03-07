@@ -10,6 +10,7 @@
   <div class="container">
     <h1>Login</h1>
 
+    <!-- ✅ Login Form -->
     <form id="loginForm">
       <label for="email">Email:</label>
       <input type="email" id="email" name="email" required>
@@ -21,16 +22,29 @@
     </form>
 
     <p>Don't have an account? <a href="index.html">Sign Up</a></p>
-    <p>Forgot your password? <a href="forgot_password_real/index.html">Reset</a></p>
+    <p>Forgot your password? <a href="./forgot_password_real/index.html" id="forgotPasswordLink">Reset Password</a></p>
     <p id="errorMessage"></p>
   </div>
 
-  <!-- ✅ Firebase Auth (Using CDN) -->
+  <!-- ✅ Forgot Password Modal -->
+  <div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Reset Password</h2>
+      <p>Enter your email to receive a password reset link.</p>
+      <input type="email" id="resetEmail" placeholder="Enter your email" required>
+      <button id="resetPasswordBtn">Send Reset Link</button>
+      <p id="resetMessage"></p>
+    </div>
+  </div>
+
+  <!-- ✅ Firebase Authentication -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-   const firebaseConfig = {
+    // ✅ Firebase Config (Replace with your actual Firebase credentials)
+  const firebaseConfig = {
   apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
   authDomain: "autismdiagnosistool.firebaseapp.com",
   projectId: "autismdiagnosistool",
@@ -58,13 +72,50 @@
         alert("Login successful!");
 
         // ✅ Redirect to Dashboard & Prevent Back Navigation
-        window.location.replace("/dashboard/index.html");
+        window.location.replace("./dashboard/index.html");
       } catch (error) {
         errorMessage.innerText = "Login failed: " + error.message;
         errorMessage.style.color = "red";
         console.error("Login Error:", error.code, error.message);
       }
     });
+
+    // ✅ Forgot Password Functionality
+    document.getElementById("forgotPasswordLink").addEventListener("click", function() {
+      document.getElementById("forgotPasswordModal").style.display = "block";
+    });
+
+    document.querySelector(".close").addEventListener("click", function() {
+      document.getElementById("forgotPasswordModal").style.display = "none";
+    });
+
+    document.getElementById("resetPasswordBtn").addEventListener("click", async function() {
+      const resetEmail = document.getElementById("resetEmail").value;
+      const resetMessage = document.getElementById("resetMessage");
+
+      if (!resetEmail) {
+        resetMessage.innerText = "Please enter your email.";
+        resetMessage.style.color = "red";
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, resetEmail);
+        resetMessage.innerText = "Password reset email sent! Check your inbox.";
+        resetMessage.style.color = "green";
+      } catch (error) {
+        resetMessage.innerText = "Error: " + error.message;
+        resetMessage.style.color = "red";
+      }
+    });
+
+    // ✅ Close Modal When Clicking Outside
+    window.onclick = function(event) {
+      const modal = document.getElementById("forgotPasswordModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
   </script>
 
   <style>
@@ -110,6 +161,39 @@
     #errorMessage {
       margin-top: 10px;
       font-weight: bold;
+    }
+
+    /* ✅ Forgot Password Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .close {
+      color: red;
+      font-size: 24px;
+      float: right;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: darkred;
     }
   </style>
 
