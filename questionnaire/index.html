@@ -3,8 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autism Diagnosis Tool</title>
+  <title>Autism Screening Questionnaire</title>
   <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Autism Screening Questionnaire</h1>
+
+    <!-- ✅ Netlify Form Setup -->
+    <form name="autism-questionnaire" method="POST" data-netlify="true" id="questionnaireForm">
+      <input type="hidden" name="form-name" value="autism-questionnaire">
+
+      <label>1. Does your child make eye contact with you?</label>
+      <select name="eye_contact" required>
+        <option value="">Select an option</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <label>2. Does your child respond to their name being called?</label>
+      <select name="response_to_name" required>
+        <option value="">Select an option</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <label>3. Does your child engage in pretend play?</label>
+      <select name="pretend_play" required>
+        <option value="">Select an option</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <label>4. Does your child show interest in other children?</label>
+      <select name="interest_in_children" required>
+        <option value="">Select an option</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <label>5. Does your child have repetitive movements (e.g., hand-flapping, rocking)?</label>
+      <select name="repetitive_movements" required>
+        <option value="">Select an option</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <button type="submit">Submit</button>
+    </form>
+    
+    <p id="message"></p>
+  </div>
+
+  <script>
+    document.getElementById("questionnaireForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      // ✅ Use AJAX to send form data to Netlify (Prevents Thank You Page)
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(new FormData(event.target)).toString()
+      })
+      .then(() => {
+        document.getElementById("message").innerText = "Form submitted successfully!";
+        
+        // ✅ Redirect to a custom thank-you page after 2 seconds
+        setTimeout(() => {
+          window.location.href = "thank-you.html";
+        }, 2000);
+      })
+      .catch(error => {
+        document.getElementById("message").innerText = "Form submission failed!";
+        console.error("Submission Error:", error);
+      });
+    });
+  </script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,22 +90,20 @@
       height: 100vh;
       margin: 0;
     }
-    .card {
+    .container {
       background: white;
-      padding: 30px;
+      padding: 20px;
       border-radius: 10px;
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
       width: 400px;
       text-align: center;
     }
-    .rating {
-      display: flex;
-      justify-content: center;
-      gap: 5px;
-      margin-bottom: 15px;
-    }
-    input[type="radio"] {
-      cursor: pointer;
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
     button {
       background: #4CAF50;
@@ -38,243 +111,11 @@
       border: none;
       cursor: pointer;
       transition: 0.3s;
-      width: 100%;
-      padding: 10px;
-      margin-top: 20px;
-      border-radius: 5px;
     }
     button:hover {
       background: #45a049;
     }
-    .hidden {
-      display: none;
-    }
   </style>
-</head>
-<body>
-<div id="root">
-  <div class="card">
-    <h1>Autism Diagnosis Questionnaire</h1>
-    <form id="diagnosisForm">
-      <!-- Steps -->
-      <div class="question" id="step1">
-        <p>1. Do you often notice small sounds that others do not?</p>
-        <div class="rating">
-          <input type="radio" name="q1" value="1" required> Never
-          <input type="radio" name="q1" value="2"> Rarely
-          <input type="radio" name="q1" value="3"> Sometimes
-          <input type="radio" name="q1" value="4"> Often
-          <input type="radio" name="q1" value="5"> Always
-        </div>
-        <button type="button" onclick="nextStep(1)">Next</button>
-      </div>
-      
-      
-      
-        <div class="question hidden" id="step2">
-        <p>2. Do you find it difficult to make eye contact with others?</p>
-        <div class="rating">
-          <input type="radio" name="q2" value="1" required> Never
-          <input type="radio" name="q2" value="2"> Rarely
-          <input type="radio" name="q2" value="3"> Sometimes
-          <input type="radio" name="q2" value="4"> Often
-          <input type="radio" name="q2" value="5"> Always
-        </div>
-        <button type="button" onclick="prevStep(1)">Back</button>
-        <button type="button" onclick="nextStep(2)">Next</button>
-      </div>
-       <!-- Step 3 -->
-        <div class="question hidden" id="step3">
-          <p>3. Do you find social situations confusing or overwhelming?</p>
-          <div class="rating">
-            <input type="radio" name="q3" value="1" required> Never
-            <input type="radio" name="q3" value="2"> Rarely
-            <input type="radio" name="q3" value="3"> Sometimes
-            <input type="radio" name="q3" value="4"> Often
-            <input type="radio" name="q3" value="5"> Always
-          </div>
-          <button type="button" onclick="prevStep(2)">Back</button>
-          <button type="button" onclick="nextStep(3)">Next</button>
-        </div>
 
-        <!-- Step 4 -->
-        <div class="question hidden" id="step4">
-          <p>4. Do you find it difficult to understand other people's emotions?</p>
-          <div class="rating">
-            <input type="radio" name="q4" value="1" required> Never
-            <input type="radio" name="q4" value="2"> Rarely
-            <input type="radio" name="q4" value="3"> Sometimes
-            <input type="radio" name="q4" value="4"> Often
-            <input type="radio" name="q4" value="5"> Always
-          </div>
-          <button type="button" onclick="prevStep(3)">Back</button>
-          <button type="button" onclick="nextStep(4)">Next</button>
-        </div>
-
-        <!-- Step 5 -->
-        <div class="question hidden" id="step5">
-          <p>5. Do you prefer routines and dislike changes?</p>
-          <div class="rating">
-            <input type="radio" name="q5" value="1" required> Never
-            <input type="radio" name="q5" value="2"> Rarely
-            <input type="radio" name="q5" value="3"> Sometimes
-            <input type="radio" name="q5" value="4"> Often
-            <input type="radio" name="q5" value="5"> Always
-          </div>
-          <button type="button" onclick="prevStep(4)">Back</button>
-          <button type="button" onclick="nextStep(5)">Next</button>
-        </div>
-
-        <!-- Step 6 -->
-        <div class="question hidden" id="step6">
-          <p>6. Do you often focus on details rather than the big picture?</p>
-          <div class="rating">
-            <input type="radio" name="q6" value="1" required> Never
-            <input type="radio" name="q6" value="2"> Rarely
-            <input type="radio" name="q6" value="3"> Sometimes
-            <input type="radio" name="q6" value="4"> Often
-            <input type="radio" name="q6" value="5"> Always
-          </div>
-          <button type="button" onclick="prevStep(5)">Back</button>
-          <button type="button" onclick="nextStep(6)">Next</button>
-        </div>
-
-        <!-- Step 7 -->
-        <div class="question hidden" id="step7">
-          <p>7. Do you prefer being alone rather than in social settings?</p>
-          <div class="rating">
-            <input type="radio" name="q7" value="1" required> Never
-            <input type="radio" name="q7" value="2"> Rarely
-            <input type="radio" name="q7" value="3"> Sometimes
-            <input type="radio" name="q7" value="4"> Often
-            <input type="radio" name="q7" value="5"> Always
-          </div>
-          <button type="button" onclick="prevStep(6)">Back</button>
-          <button type="button" onclick="nextStep(7)">Next</button>
-        </div>
-
-
-        <div class="question hidden" id="step8">
-          <label for="q8">8. Do you have intense interests in specific topics?</label>
-          <div class="rating">
-            <input type="radio" name="q8" value="1" required> Never
-            <input type="radio" name="q8" value="2"> Rarely
-            <input type="radio" name="q8" value="3"> Sometimes
-            <input type="radio" name="q8" value="4"> Often
-            <input type="radio" name="q8" value="5"> Always
-          </div>
-          <button type="button" onclick="prevStep(7)">Back</button>
-          <button type="submit">Submit</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-
-
-  <script>
-    let currentStep = 1;
-
-    function nextStep(step) {
-      document.getElementById(`step${step}`).classList.add("hidden");
-      document.getElementById(`step${step + 1}`).classList.remove("hidden");
-      currentStep++;
-      updateProgress();
-    }
-
-    function prevStep(step) {
-      document.getElementById(`step${step + 1}`).classList.add("hidden");
-      document.getElementById(`step${step}`).classList.remove("hidden");
-      currentStep--;
-      updateProgress();
-    }
-
-    function updateProgress() {
-      let progressPercentage = (currentStep / 8) * 100;
-      document.getElementById("progress").style.width = `${progressPercentage}%`;
-    }
-
-    document.getElementById("diagnosisForm").addEventListener("submit", async function(event) {
-      event.preventDefault();
-      let answers = [];
-      for (let i = 1; i <= 8; i++) {
-        let selected = document.querySelector(`input[name="q${i}"]:checked`);
-        answers.push(selected ? parseInt(selected.value) : 0);
-      }
-      let response = await fetch("http://127.0.0.1:5000/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: answers })
-      });
-      let data = await response.json();
-      document.getElementById("diagnosisResult").innerText = `Score: ${data.score}\n${data.message}`;
-      document.getElementById("root").classList.add("hidden");
-      document.getElementById("thankYouPage").classList.remove("hidden");
-    });
-
-    function restartForm() {
-      window.location.reload();
-    }
-  </script>
-</body>
-
-</html>
-
-      <div class="question hidden" id="step8">
-        <p>8. Do you have intense interests in specific topics?</p>
-        <div class="rating">
-          <input type="radio" name="q8" value="1" required> Never
-          <input type="radio" name="q8" value="2"> Rarely
-          <input type="radio" name="q8" value="3"> Sometimes
-          <input type="radio" name="q8" value="4"> Often
-          <input type="radio" name="q8" value="5"> Always
-        </div>
-        <button type="button" onclick="prevStep(7)">Back</button>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div id="thankYouPage" class="hidden">
-  <div class="card">
-    <h1>Thank You!</h1>
-    <p>We appreciate your time in completing this questionnaire. Based on your answers, here is a preliminary assessment:</p>
-    <p id="diagnosisResult"></p>
-    <button onclick="restartForm()">Start Over</button>
-  </div>
-</div>
-
-<script>
-  let currentStep = 1;
-  function nextStep(step) {
-    document.getElementById(`step${step}`).classList.add("hidden");
-    document.getElementById(`step${step + 1}`).classList.remove("hidden");
-  }
-  function prevStep(step) {
-    document.getElementById(`step${step + 1}`).classList.add("hidden");
-    document.getElementById(`step${step}`).classList.remove("hidden");
-  }
-  document.getElementById("diagnosisForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
-    let answers = [];
-    for (let i = 1; i <= 8; i++) {
-      let selected = document.querySelector(`input[name="q${i}"]:checked`);
-      answers.push(selected ? parseInt(selected.value) : 0);
-    }
-    let response = await fetch("http://127.0.0.1:5000/predict", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ answers: answers })
-    });
-    let data = await response.json();
-    document.getElementById("diagnosisResult").innerText = `Score: ${data.score}\n${data.message}`;
-    document.getElementById("root").classList.add("hidden");
-    document.getElementById("thankYouPage").classList.remove("hidden");
-  });
-  function restartForm() {
-    window.location.reload();
-  }
-</script>
 </body>
 </html>
