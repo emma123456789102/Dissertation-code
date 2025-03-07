@@ -61,7 +61,7 @@
         alert("Login successful!");
 
         // ✅ Redirect to Dashboard & Prevent Back Navigation
-        window.location.replace("/dashboard/index.html");
+        window.location.replace("./dashboard/index.html");
       } catch (error) {
         errorMessage.innerText = "Login failed: " + error.message;
         errorMessage.style.color = "red";
