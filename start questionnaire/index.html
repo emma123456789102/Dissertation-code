@@ -9,7 +9,7 @@
 <body>
     <nav class="navbar">
         <h1>Autism Self-Assessment</h1>
-        <button onclick="goBack()">Back to Dashboard</button>
+        <button id="backBtn">Back to Dashboard</button>
     </nav>
 
     <div class="container">
@@ -21,17 +21,19 @@
             <p>This is not a medical diagnosis. It is a self-assessment tool intended to provide general guidance. If you have concerns, please consult a healthcare professional.</p>
         </div>
 
-        <button class="start-btn" onclick="startQuestionnaire()">Start Questionnaire</button>
+        <button class="start-btn" id="startBtn">Start Questionnaire</button>
     </div>
 
     <script>
-        function startQuestionnaire() {
-            window.location.href = "./questionnaire/"; // Redirect to actual questionnaire page
-        }
+        document.getElementById("startBtn").addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent unwanted default behavior
+            window.location.href = "./questionnaire/index.html"; // Redirect to Questionnaire
+        });
 
-        function goBack() {
-            window.location.href = "./dashboard/"; // Redirect back to dashboard
-        }
+        document.getElementById("backBtn").addEventListener("click", function(event) {
+            event.preventDefault();
+            window.location.href = "./dashboard/index.html"; // Redirect to Dashboard
+        });
     </script>
 
     <style>
