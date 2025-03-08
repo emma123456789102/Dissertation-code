@@ -17,10 +17,14 @@
       <label for="password">Password:</label>
       <input type="password" id="password" name="password" required>
 
+      
+      <label for="forgotPassword"> forgot Password:</label>
+      <button type="forgotPassword"id="forgotPassword" name="forgotPassword" required>
+
+        
       <button type="submit">Log In</button>
     </form>
-    <label for="forgot password"> forgot Password:</label>
-<button type="forgot password"id="forgot password" name="forgot password" required>
+    
     <p>Don't have an account? <a href="index.html">Sign Up</a></p>
     <p>Forgot your password? <a href="forgot-password-real.html" id="forgotPassword">Reset</a></p>
     <p id="errorMessage"></p>
@@ -65,6 +69,7 @@
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const errorMessage = document.getElementById("errorMessage");
+      const forgotPassword = document.getElementById("
 
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
