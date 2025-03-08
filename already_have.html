@@ -84,6 +84,31 @@
         }
       }
     });
+
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
+  event.preventDefault();
+  
+  console.log("Login button clicked!"); // Debugging Step 1
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const errorMessage = document.getElementById("errorMessage");
+
+  console.log("Email:", email); // Debugging Step 2
+  console.log("Password:", password);
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log("User signed in:", userCredential.user); // Debugging Step 3
+
+    alert("Login successful!");
+    window.location.href = "/dashboard/index.html"; 
+  } catch (error) {
+    console.error("Login Error:", error.message);
+    errorMessage.innerText = "Login failed: " + error.message;
+  }
+});
+
   </script>
 
   <style>
