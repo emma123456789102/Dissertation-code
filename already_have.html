@@ -33,7 +33,7 @@
 
     // ✅ Firebase Configuration
     const firebaseConfig = {
-      apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
+      apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",  //REPLACE WITH YOUR KEY
       authDomain: "autismdiagnosistool.firebaseapp.com",
       projectId: "autismdiagnosistool",
       storageBucket: "autismdiagnosistool.firebasestorage.app",
@@ -62,10 +62,11 @@
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         console.log("User signed in:", userCredential.user);
 
-        alert("Login successful!");
-        window.location.href = "dashboard.html"; // ✅ Redirect to dashboard
+        //alert("Login successful!");
+        errorMessage.innerText = "Login successful!";  // Display success here instead of redirecting
+        //window.location.href = "dashboard.html"; // ✅ Redirect to dashboard - COMMENT OUT FOR TESTING
       } catch (error) {
-        console.error("Login Error:", error.message);
+        console.error("Login Error:", error);  // Log the entire error object
         errorMessage.innerText = "Login failed: " + error.message;
       }
     });
@@ -79,36 +80,11 @@
           await sendPasswordResetEmail(auth, email);
           alert("Password reset email sent! Check your inbox.");
         } catch (error) {
-          console.error("Password Reset Error:", error.message);
+          console.error("Password Reset Error:", error); // Log the entire error object
           alert("Error: " + error.message);
         }
       }
     });
-
-    document.getElementById("loginForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
-  
-  console.log("Login button clicked!"); // Debugging Step 1
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const errorMessage = document.getElementById("errorMessage");
-
-  console.log("Email:", email); // Debugging Step 2
-  console.log("Password:", password);
-
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    console.log("User signed in:", userCredential.user); // Debugging Step 3
-
-    alert("Login successful!");
-    window.location.href = "/dashboard/index.html"; 
-  } catch (error) {
-    console.error("Login Error:", error.message);
-    errorMessage.innerText = "Login failed: " + error.message;
-  }
-});
-
   </script>
 
   <style>
