@@ -38,10 +38,11 @@
 
     // ✅ Firebase Configuration
     const firebaseConfig = {
-      apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",  //REPLACE WITH YOUR KEY
+       const firebaseConfig = {
+      apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
       authDomain: "autismdiagnosistool.firebaseapp.com",
       projectId: "autismdiagnosistool",
-      storageBucket: "autismdiagnosistool.firebasestorage.app",
+      storageBucket: "autismdiagnosistool.appspot.com", // ✅ Fixed URL
       messagingSenderId: "932313058973",
       appId: "1:932313058973:web:b48717b2dac4f129700e74",
       measurementId: "G-C9B9638407"
@@ -71,6 +72,18 @@
       const errorMessage = document.getElementById("errorMessage");
       const forgotPassword = document.getElementById("
 
+signInWithEmailAndPassword(auth,email,password)
+      .then((usercredential) =>{
+    // Signed in 
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+
+                                                     
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         console.log("User signed in:", userCredential.user);
