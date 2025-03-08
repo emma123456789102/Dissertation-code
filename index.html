@@ -11,7 +11,7 @@
     <div class="card" id="authPage">
       <h1 id="formTitle">Create New Account</h1>
       
-      <!-- ✅ Form for GitHub Pages (removed Netlify-specific attributes) -->
+      <!-- ✅ Form for Signing Up -->
       <form id="authForm">
         <label for="name" id="nameLabel">Full Name:</label>
         <input type="text" id="name" name="name" required>
@@ -28,29 +28,31 @@
         <button type="submit">Sign Up</button>
       </form>
       
-      <p id="toggleAuth">Already have an account? <a href="already_have.html">Log In</a></p>
+      <p id="toggleAuth">Already have an account? <a href="#">Log In</a></p>
     </div>
   </div>
 
-  <!-- ✅ Use Firebase CDN instead of importing from a local file -->
+  <!-- ✅ Firebase Authentication & Firestore -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // ✅ Firebase Configuration (Replace with your Firebase credentials)
+    // ✅ Firebase Configuration (Corrected storageBucket URL)
     const firebaseConfig = {
-  apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
-  authDomain: "autismdiagnosistool.firebaseapp.com",
-  projectId: "autismdiagnosistool",
-  storageBucket: "autismdiagnosistool.firebasestorage.app",
-  messagingSenderId: "932313058973",
-  appId: "1:932313058973:web:b48717b2dac4f129700e74",
-  measurementId: "G-C9B9638407"
-};
+      apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
+      authDomain: "autismdiagnosistool.firebaseapp.com",
+      projectId: "autismdiagnosistool",
+      storageBucket: "autismdiagnosistool.appspot.com", // ✅ Fixed URL
+      messagingSenderId: "932313058973",
+      appId: "1:932313058973:web:b48717b2dac4f129700e74",
+      measurementId: "G-C9B9638407"
+    };
 
-    // ✅ Initialize Firebase
+    // ✅ Initialize Firebase & Firestore
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     document.addEventListener("DOMContentLoaded", function () {
       const authForm = document.getElementById("authForm");
@@ -67,7 +69,7 @@
         isSignUp = !isSignUp;
         formTitle.innerText = isSignUp ? "Create New Account" : "Sign In";
         toggleAuth.innerHTML = isSignUp 
-          ? 'Already have an account? <a href="./already_have/index.html">Log In</a>' 
+          ? 'Already have an account? <a href="#">Log In</a>' 
           : 'Don\'t have an account? <a href="#">Sign Up</a>';
         nameField.style.display = isSignUp ? "block" : "none";
         nameLabel.style.display = isSignUp ? "block" : "none";
@@ -78,24 +80,37 @@
 
       authForm.addEventListener("submit", async function (event) {
         event.preventDefault();
+        const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
+        const dob = document.getElementById("dob").value;
 
         try {
           if (isSignUp) {
-            await createUserWithEmailAndPassword(auth, email, password);
+            // ✅ Create User with Email & Password
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // ✅ Save User Data to Firestore
+            await setDoc(doc(db, "users", user.uid), {
+              fullName: name,
+              email: email,
+              dateOfBirth: dob
+            });
+
             alert("Account created successfully!");
           } else {
             await signInWithEmailAndPassword(auth, email, password);
             alert("Login successful!");
           }
 
-          // ✅ Redirect to Dashboard after successful login
+          // ✅ Redirect to Dashboard after successful login/signup
           setTimeout(() => {
             window.location.href = "./dashboard/index.html";
           }, 1000);
         } catch (error) {
           alert(error.message);
+          console.error("Firebase Error:", error);
         }
       });
     });
