@@ -9,36 +9,29 @@
 <body>
   <div id="root">
     <div class="card" id="authPage">
-      <h1 id="formTitle">Create New Account</h1>
+      <h1>Sign In</h1>
       
-      <!-- ✅ Form for Signing Up -->
-      <form id="authForm">
-        <label for="name" id="nameLabel">Full Name:</label>
-        <input type="text" id="name" name="name" required>
-
+      <!-- ✅ Sign In Form -->
+      <form id="signInForm">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
-        <label for="dob" id="dobLabel">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" required>
-
-        <button type="submit">Sign Up</button>
+        <button type="submit">Log In</button>
       </form>
-      
-      <p id="toggleAuth">Already have an account? <a href="#">Log In</a></p>
+
+      <p id="toggleAuth">Don't have an account? <a href="index.html">Sign Up</a></p>
     </div>
   </div>
 
-  <!-- ✅ Firebase Authentication & Firestore -->
+  <!-- ✅ Firebase Authentication -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-const firebaseConfig = {
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+ const firebaseConfig = {
   apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
   authDomain: "autismdiagnosistool.firebaseapp.com",
   projectId: "autismdiagnosistool",
@@ -50,61 +43,24 @@ const firebaseConfig = {
 
 
 
-    
+    // ✅ Initialize Firebase
+    const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
     document.addEventListener("DOMContentLoaded", function () {
-      const authForm = document.getElementById("authForm");
-      const toggleAuth = document.getElementById("toggleAuth");
-      const formTitle = document.getElementById("formTitle");
-      const nameField = document.getElementById("name");
-      const nameLabel = document.getElementById("nameLabel");
-      const dobField = document.getElementById("dob");
-      const dobLabel = document.getElementById("dobLabel");
-      let isSignUp = true;
+      const signInForm = document.getElementById("signInForm");
 
-      toggleAuth.addEventListener("click", (e) => {
-        e.preventDefault();
-        isSignUp = !isSignUp;
-        formTitle.innerText = isSignUp ? "Create New Account" : "Sign In";
-        toggleAuth.innerHTML = isSignUp 
-          ? 'Already have an account? <a href="#">Log In</a>' 
-          : 'Don\'t have an account? <a href="#">Sign Up</a>';
-        nameField.style.display = isSignUp ? "block" : "none";
-        nameLabel.style.display = isSignUp ? "block" : "none";
-        dobField.style.display = isSignUp ? "block" : "none";
-        dobLabel.style.display = isSignUp ? "block" : "none";
-        authForm.querySelector("button").innerText = isSignUp ? "Sign Up" : "Log In";
-      });
-
-      authForm.addEventListener("submit", async function (event) {
+      signInForm.addEventListener("submit", async function (event) {
         event.preventDefault();
-        const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        const dob = document.getElementById("dob").value;
 
         try {
-          if (isSignUp) {
-            // ✅ Create User with Email & Password
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+          // ✅ Sign In User
+          await signInWithEmailAndPassword(auth, email, password);
+          alert("Login successful!");
 
-            // ✅ Save User Data to Firestore
-            await setDoc(doc(db, "users", user.uid), {
-              fullName: name,
-              email: email,
-              dateOfBirth: dob
-            });
-
-            alert("Account created successfully!");
-          } else {
-            await signInWithEmailAndPassword(auth, email, password);
-            alert("Login successful!");
-          }
-
-          // ✅ Redirect to Dashboard after successful login/signup
+          // ✅ Redirect to Dashboard
           setTimeout(() => {
             window.location.href = "./dashboard/index.html";
           }, 1000);
