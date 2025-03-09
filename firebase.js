@@ -1,15 +1,21 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
-  authDomain: "autismdiagnosistool.firebaseapp.com",
-  projectId: "autismdiagnosistool",
-  storageBucket: "autismdiagnosistool.firebasestorage.app",
-  messagingSenderId: "932313058973",
-  appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
-  measurementId: "G-VDYP4DYPXB"
+  apiKey: "AIzaSyBqlDdqZXwBANTYLOuuTYDIB7U4SCdKvGc",
+  authDomain: "spectrumai-f2aad.firebaseapp.com",
+  projectId: "spectrumai-f2aad",
+  storageBucket: "spectrumai-f2aad.firebasestorage.app",
+  messagingSenderId: "916233718480",
+  appId: "1:916233718480:web:d14e87eb7c22a23b252cd5",
+  measurementId: "G-ZQSRRPLZBW"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const analytics = getAnalytics(app);
