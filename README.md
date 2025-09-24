@@ -100,16 +100,16 @@ Open a Pull Request.
 
 Please ensure that your code adheres to the project’s coding standards and includes appropriate tests.
 
-##📜 License
+## 📜 License
 
 This project is licensed under the MIT License
 .
 
-##📬 Contact
+## 📬 Contact
 
 For questions or feedback, feel free to reach out:
 📧 Davidsone381@gmail.com
 
-##✨ Thank you for checking out my work on SpectrumAI! ✨
+## ✨ Thank you for checking out my work on SpectrumAI! ✨
 
 
